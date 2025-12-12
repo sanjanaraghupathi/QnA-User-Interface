@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Header from './components/layout/Header'
 import ProjectCatalog from './pages/ProjectCatalog'
 import ExecutionHistory from './pages/ExecutionHistory'
+//import DetailedResults from './pages/DetailedResults'
 import DetailedResults from './pages/DetailedResults'
 
 function App() {
