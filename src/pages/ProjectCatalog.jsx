@@ -2,37 +2,40 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FolderKanban, Plus } from 'lucide-react'
-import { projects, departments, statuses } from '../data/projects'
+import { projects as initialProjects, departments, statuses } from '../data/projects'
 import ProjectCard from '../components/projects/ProjectCard'
 import ProjectTable from '../components/projects/ProjectTable'
 import ProjectFilters from '../components/projects/ProjectFilters'
 import TriggerRunModal from '../components/modals/TriggerRunModal'
 import ConfigurationModal from '../components/modals/ConfigurationModal'
+import CreateProjectModal from '../components/modals/CreateProjectModal'
 
 const ProjectCatalog = () => {
   const navigate = useNavigate()
-  
+
   // State
+  const [projects, setProjects] = useState(initialProjects)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('')
   const [viewMode, setViewMode] = useState('card')
-  
+
   // Modal state
   const [runModalOpen, setRunModalOpen] = useState(false)
   const [configModalOpen, setConfigModalOpen] = useState(false)
+  const [createProjectModalOpen, setCreateProjectModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
 
   // Filtered projects
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
-      const matchesSearch = !searchQuery || 
+      const matchesSearch = !searchQuery ||
         project.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.description.toLowerCase().includes(searchQuery.toLowerCase())
-      
+
       const matchesStatus = !statusFilter || project.status === statusFilter
       const matchesDepartment = !departmentFilter || project.department === departmentFilter
-      
+
       return matchesSearch && matchesStatus && matchesDepartment
     })
   }, [searchQuery, statusFilter, departmentFilter])
@@ -52,6 +55,17 @@ const ProjectCatalog = () => {
     navigate(`/history/${project.id}`)
   }
 
+  const handleCreateProject = (projectData) => {
+    const newProject = {
+      ...projectData,
+      status: 'Active',
+      lastRun: 'Never',
+      metrics: null
+    }
+    setProjects([newProject, ...projects])
+    setCreateProjectModalOpen(false)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -61,7 +75,7 @@ const ProjectCatalog = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <motion.div 
+          <motion.div
             className="flex items-center gap-3 mb-2"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -73,7 +87,7 @@ const ProjectCatalog = () => {
               Project Catalog
             </h1>
           </motion.div>
-          <motion.p 
+          <motion.p
             className="text-surface-400"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -82,11 +96,12 @@ const ProjectCatalog = () => {
             Manage and run quality assurance checks across your projects
           </motion.p>
         </div>
-        
+
         <motion.button
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
+          onClick={() => setCreateProjectModalOpen(true)}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-electric-600 hover:bg-electric-500 text-white font-medium transition-colors shadow-lg shadow-electric-600/25"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -111,7 +126,7 @@ const ProjectCatalog = () => {
       />
 
       {/* Results Count */}
-      <motion.p 
+      <motion.p
         className="text-sm text-surface-500 mb-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -168,6 +183,11 @@ const ProjectCatalog = () => {
         isOpen={configModalOpen}
         onClose={() => setConfigModalOpen(false)}
         project={selectedProject}
+      />
+      <CreateProjectModal
+        isOpen={createProjectModalOpen}
+        onClose={() => setCreateProjectModalOpen(false)}
+        onCreate={handleCreateProject}
       />
     </motion.div>
   )
