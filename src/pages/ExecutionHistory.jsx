@@ -1,32 +1,33 @@
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { 
-  ChevronLeft, 
-  History, 
+import {
+  ChevronLeft,
+  History,
   Play,
   Calendar,
   TrendingUp
 } from 'lucide-react'
-import { projects } from '../data/projects'
-import { executions, activeRuns } from '../data/executions'
+import { activeRuns } from '../data/executions'
+import { useProject } from '../context/ProjectContext'
 import ActiveRunDashboard from '../components/history/ActiveRunDashboard'
 import HistoryTable from '../components/history/HistoryTable'
 
 const ExecutionHistory = () => {
   const { projectId } = useParams()
-  
+  const { projects, getExecutions } = useProject()
+
   // Find the project
   const project = projects.find(p => p.id === projectId)
-  
+
   // Get executions for this project
-  const projectExecutions = executions[projectId] || []
+  const projectExecutions = getExecutions(projectId)
 
   // Calculate stats
   const totalRuns = projectExecutions.length
-  const passRate = totalRuns > 0 
+  const passRate = totalRuns > 0
     ? Math.round((projectExecutions.filter(e => e.status === 'Pass').length / totalRuns) * 100)
     : 0
-  const lastRunDate = projectExecutions.length > 0 
+  const lastRunDate = projectExecutions.length > 0
     ? new Date(projectExecutions[0].executionDate).toLocaleDateString()
     : 'Never'
 
@@ -64,7 +65,7 @@ const ExecutionHistory = () => {
 
       {/* Page Header */}
       <div className="mb-8">
-        <motion.div 
+        <motion.div
           className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,7 +86,7 @@ const ExecutionHistory = () => {
               {project.description}
             </p>
           </div>
-          
+
           <motion.button
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

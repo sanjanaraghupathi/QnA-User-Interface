@@ -1,22 +1,24 @@
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { 
-  ChevronLeft, 
+import {
+  ChevronLeft,
   Target,
   Download,
   Share2
 } from 'lucide-react'
-import { getResultById } from '../data/results'
 import ResultHeader from '../components/results/ResultHeader'
 import CheckpointCard from '../components/results/CheckpointCard'
 import InsightsPanel from '../components/results/InsightsPanel'
 import KnowledgeSourceTabs from '../components/results/KnowledgeSourceTabs'
 
+import { useProject } from '../context/ProjectContext'
+
 const DetailedResults = () => {
   const { resultId } = useParams()
-  
+  const { getResult } = useProject()
+
   // Get result details
-  const result = getResultById(resultId)
+  const result = getResult(resultId)
 
   if (!result) {
     return (
@@ -124,12 +126,11 @@ const DetailedResults = () => {
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`flex-1 ${
-                      checkpoint.outcome === 'PASS' ? 'bg-emerald-500' :
+                    className={`flex-1 ${checkpoint.outcome === 'PASS' ? 'bg-emerald-500' :
                       checkpoint.outcome === 'FAIL' ? 'bg-red-500' :
-                      checkpoint.outcome === 'NR' ? 'bg-indigo-500' :
-                      'bg-surface-500'
-                    }`}
+                        checkpoint.outcome === 'NR' ? 'bg-indigo-500' :
+                          'bg-surface-500'
+                      }`}
                     style={{ originX: 0 }}
                   />
                 ))}
@@ -139,10 +140,10 @@ const DetailedResults = () => {
             {/* Checkpoint Cards */}
             <div className="space-y-4">
               {result.checkpoints.map((checkpoint, index) => (
-                <CheckpointCard 
-                  key={checkpoint.id} 
-                  checkpoint={checkpoint} 
-                  index={index} 
+                <CheckpointCard
+                  key={checkpoint.id}
+                  checkpoint={checkpoint}
+                  index={index}
                 />
               ))}
             </div>

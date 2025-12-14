@@ -13,15 +13,20 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
 
-    const login = () => {
-        // Dummy login
+    const login = (email, password) => {
+        // Simple name derivation from email
+        const name = email.split('@')[0]
+            .split('.')
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(' ')
+
         setUser({
             id: 1,
-            name: 'John Smith',
-            role: 'Risk Analyst',
-            email: 'john.smith@company.com',
-            department: 'Risk Management',
-            avatar: 'https://ui-avatars.com/api/?name=John+Smith&background=10b981&color=fff' // Using ui-avatars for now or just initials
+            name: name,
+            role: 'User', // Default role
+            email: email,
+            department: 'General', // Default department
+            avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=10b981&color=fff`
         })
     }
 

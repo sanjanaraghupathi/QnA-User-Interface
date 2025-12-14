@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FolderKanban, Plus } from 'lucide-react'
-import { projects as initialProjects, departments, statuses } from '../data/projects'
+import { departments, statuses } from '../data/projects'
+import { useProject } from '../context/ProjectContext'
 import ProjectCard from '../components/projects/ProjectCard'
 import ProjectTable from '../components/projects/ProjectTable'
 import ProjectFilters from '../components/projects/ProjectFilters'
@@ -14,7 +15,7 @@ const ProjectCatalog = () => {
   const navigate = useNavigate()
 
   // State
-  const [projects, setProjects] = useState(initialProjects)
+  const { projects, addProject } = useProject()
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('')
@@ -38,7 +39,7 @@ const ProjectCatalog = () => {
 
       return matchesSearch && matchesStatus && matchesDepartment
     })
-  }, [searchQuery, statusFilter, departmentFilter])
+  }, [projects, searchQuery, statusFilter, departmentFilter])
 
   // Handlers
   const handleRun = (project) => {
@@ -62,7 +63,8 @@ const ProjectCatalog = () => {
       lastRun: 'Never',
       metrics: null
     }
-    setProjects([newProject, ...projects])
+    // Add to context
+    addProject(newProject)
     setCreateProjectModalOpen(false)
   }
 

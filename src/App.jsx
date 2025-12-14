@@ -10,25 +10,28 @@ import Settings from './pages/Settings'
 import Notifications from './pages/Notifications'
 import ProtectedLayout from './components/layout/ProtectedLayout'
 import { AuthProvider } from './context/AuthContext'
+import { ProjectProvider } from './context/ProjectContext'
 
 function App() {
   return (
     <AuthProvider>
-      <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/login" element={<Login />} />
+      <ProjectProvider>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/login" element={<Login />} />
 
-          <Route element={<ProtectedLayout />}>
-            <Route path="/" element={<ProjectCatalog />} />
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/history/:projectId" element={<ExecutionHistory />} />
-            <Route path="/results/:resultId" element={<DetailedResults />} />
-          </Route>
-        </Routes>
-      </AnimatePresence>
+            <Route element={<ProtectedLayout />}>
+              <Route path="/" element={<ProjectCatalog />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/history/:projectId" element={<ExecutionHistory />} />
+              <Route path="/results/:resultId" element={<DetailedResults />} />
+            </Route>
+          </Routes>
+        </AnimatePresence>
+      </ProjectProvider>
     </AuthProvider>
   )
 }

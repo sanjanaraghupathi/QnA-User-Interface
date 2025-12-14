@@ -1,15 +1,19 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sparkles, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const { login } = useAuth()
     const navigate = useNavigate()
 
     const handleLogin = (e) => {
         e.preventDefault()
-        login()
+        if (!email || !password) return
+        login(email, password)
         navigate('/')
     }
 
@@ -34,7 +38,9 @@ const Login = () => {
                             <label className="text-sm font-medium text-surface-300">Email Address</label>
                             <input
                                 type="email"
-                                defaultValue="john.smith@company.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="name@company.com"
                                 className="w-full px-4 py-3 bg-surface-800/50 border border-surface-700 rounded-xl text-white placeholder-surface-500 focus:outline-none focus:border-electric-500 focus:ring-1 focus:ring-electric-500 transition-colors"
                             />
                         </div>
@@ -43,7 +49,9 @@ const Login = () => {
                             <label className="text-sm font-medium text-surface-300">Password</label>
                             <input
                                 type="password"
-                                defaultValue="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
                                 className="w-full px-4 py-3 bg-surface-800/50 border border-surface-700 rounded-xl text-white placeholder-surface-500 focus:outline-none focus:border-electric-500 focus:ring-1 focus:ring-electric-500 transition-colors"
                             />
                         </div>
@@ -59,12 +67,7 @@ const Login = () => {
                         </motion.button>
                     </form>
 
-                    <p className="mt-6 text-center text-sm text-surface-400">
-                        Don't have an account?{' '}
-                        <button className="text-electric-400 hover:text-electric-300 transition-colors font-medium">
-                            Contact Admin
-                        </button>
-                    </p>
+
                 </div>
             </motion.div>
         </div>

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { 
-  X, 
-  Play, 
+import {
+  X,
+  Play,
   Calendar,
   Server,
   FileText,
@@ -12,9 +12,11 @@ import {
   CheckCircle,
   CloudCog
 } from 'lucide-react'
+import { useProject } from '../../context/ProjectContext'
 
 const TriggerRunModal = ({ isOpen, onClose, project }) => {
   const navigate = useNavigate()
+  const { addExecution, updateProject } = useProject()
   const [formData, setFormData] = useState({
     referenceId: '',
     environment: 'Production',
@@ -30,7 +32,26 @@ const TriggerRunModal = ({ isOpen, onClose, project }) => {
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))
-    
+
+    // Add to Global State
+    const resultId = `RES-${Math.floor(1000 + Math.random() * 9000)}-${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`
+    const newExecution = {
+      resultId: resultId,
+      executionDate: new Date().toISOString(),
+      projectId: project.id,
+      status: Math.random() > 0.3 ? 'Pass' : 'Fail', // 70% chance of Pass, 30% Fail
+      duration: `${Math.floor(Math.random() * 10) + 1}m ${Math.floor(Math.random() * 60)}s`,
+      triggeredBy: 'Current User', // TODO: Get from auth
+      environment: formData.environment,
+    }
+
+    addExecution(project.id, newExecution)
+
+    // Update project last run date
+    updateProject(project.id, {
+      lastRun: new Date(newExecution.executionDate).toLocaleDateString()
+    })
+
     setIsSubmitting(false)
     setIsSuccess(true)
 
@@ -92,7 +113,7 @@ const TriggerRunModal = ({ isOpen, onClose, project }) => {
             {/* Content */}
             <div className="p-6">
               {/* Data Source Info */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}

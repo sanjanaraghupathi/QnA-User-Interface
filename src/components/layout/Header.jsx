@@ -34,9 +34,7 @@ const Header = () => {
               <h1 className="font-heading font-bold text-xl text-white group-hover:text-electric-400 transition-colors">
                 QnA
               </h1>
-              <p className="text-[10px] text-surface-400 -mt-1 tracking-wider uppercase">
-                Quality Assurance
-              </p>
+
             </div>
           </Link>
 
